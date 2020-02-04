@@ -6,29 +6,29 @@ typedef void* Coroutine(Iterator*);
 
 Coroutine pong;
 
-Generator(void *, ping)
+GENERATOR(void *, ping)
 {
     for (;;) {
         printf("ping\n");
         sleep(1);
         yield(pong);
     }
-    stop();
+    stop_generator();
 }
 
-Generator(void *, pong)
+GENERATOR(void *, pong)
 {
     for (;;) {
         printf("pong\n");
         sleep(1);
         yield(ping);
     }
-    stop();
+    stop_generator();
 }
 
 void run_coroutine(Coroutine coroutine)
 {
-    Iterator it = begin();
+    Iterator it = create_iterator();
     while (!it.done) {
         coroutine = coroutine(&it);
     }

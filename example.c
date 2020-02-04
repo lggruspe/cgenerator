@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-Generator(int, odd)
+GENERATOR(int, odd)
 {
     static int i;
     i = 1;
@@ -10,10 +10,10 @@ Generator(int, odd)
         yield(i);
         i += 2;
     }
-    stop();
+    stop_generator();
 }
 
-Generator(int, even)
+GENERATOR(int, even)
 {
     static int i;
     i = 0;
@@ -21,22 +21,22 @@ Generator(int, even)
         yield(i);
         i += 2;
     }
-    stop();
+    stop_generator();
 }
 
-Generator(int, integer)
+GENERATOR(int, integer)
 {
     static Iterator it, jt;
-    it = begin();   // odd
-    jt = begin();   // even
+    it = create_iterator();   // odd
+    jt = create_iterator();   // even
     for (;;) {
         yield(even(&it));
         yield(odd(&jt));
     }
-    stop();
+    stop_generator();
 }
 
-Generator(char, hello)
+GENERATOR(char, hello)
 {
     yield('h');
     yield('e');
@@ -52,41 +52,41 @@ Generator(char, hello)
     yield('d');
     yield('!');
     yield('\n');
-    stop();
+    stop_generator();
 }
 
-Generator(void*, none)
+GENERATOR(void*, none)
 {
     static int i;
     for (i = 0; i < 10; ++i) {
         yield(NULL);
     }
-    stop();
+    stop_generator();
 }
 
-Generator(int, repeat, int val)
+GENERATOR(int, repeat, int val)
 {
     for (;;) {
         yield(val);
     }
-    stop();
+    stop_generator();
 }
 
-Generator(int, repeat42)
+GENERATOR(int, repeat42)
 {
     static Iterator it;
-    it = begin();
+    it = create_iterator();
     for (;;) {
         yield(repeat(&it, 42));
     }
-    stop();
+    stop_generator();
 }
 
 void test_hello()
 {
     char helloworld[] = "hello, world!\n";
     int i = 0;
-    Iterator it = begin();
+    Iterator it = create_iterator();
     for (char c = hello(&it); !it.done; c = hello(&it)) {
         assert(c == helloworld[i]);
         ++i;
@@ -96,7 +96,7 @@ void test_hello()
 void test_integers()
 {
     int N = 20;
-    Iterator it = begin();
+    Iterator it = create_iterator();
     for (int i = 0; i < N; ++i) {
         int n = integer(&it);
         assert(i == n);
@@ -106,7 +106,7 @@ void test_integers()
 void test_yield_none()
 {
     int count = 0;
-    Iterator it = begin();
+    Iterator it = create_iterator();
     none(&it);
     while (!it.done) {
         ++count;
@@ -117,7 +117,7 @@ void test_yield_none()
 
 void test_parameterized()
 {
-    Iterator it = begin();
+    Iterator it = create_iterator();
     for (int i = 0; i < 10; ++i) {
         assert(!it.done);
         int val = repeat42(&it);

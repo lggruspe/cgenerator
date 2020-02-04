@@ -10,7 +10,7 @@ typedef struct {
     bool done;
 } Iterator;
 
-#define Generator(Type, Name, ...) \
+#define GENERATOR(Type, Name, ...) \
 Type Name(Iterator *prev, ##__VA_ARGS__) \
 { \
     struct { Type garbage; void *null; } impl = { .null = NULL }; \
@@ -22,20 +22,20 @@ Type Name(Iterator *prev, ##__VA_ARGS__) \
     }
 
 #define yield(Value) \
-        set_yield_label((Value), CONCAT(l, __COUNTER__))
+        YIELD_IMPL((Value), CONCAT(l, __COUNTER__))
 
-#define set_yield_label(Value, Label) \
+#define YIELD_IMPL(Value, Label) \
         prev->label = &&Label; \
         return (Value); \
     Label:
 
-#define stop() \
+#define stop_generator() \
     end: \
         prev->done = true; \
         return impl.garbage; \
 }
 
-static inline Iterator begin()
+static inline Iterator create_iterator()
 {
     return (Iterator){ .done = false, .label = NULL };
 }
