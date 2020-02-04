@@ -55,6 +55,15 @@ Generator(char, hello)
     stop();
 }
 
+Generator(void*, none)
+{
+    static int i;
+    for (i = 0; i < 10; ++i) {
+        yield(NULL);
+    }
+    stop();
+}
+
 void test_hello()
 {
     char helloworld[] = "hello, world!\n";
@@ -76,9 +85,22 @@ void test_integers()
     }
 }
 
+void test_yield_none()
+{
+    int count = 0;
+    Iterator it = begin();
+    none(&it);
+    while (!it.done) {
+        ++count;
+        none(&it);
+    }
+    assert(count == 10);
+}
+
 int main()
 {
     test_hello();
     test_integers();
+    test_yield_none();
     printf("Test passed\n");
 }
