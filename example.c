@@ -1,4 +1,5 @@
 #include "generator.h"
+#include <assert.h>
 #include <stdio.h>
 
 Generator(int, odd)
@@ -57,16 +58,29 @@ Generator(char, hello)
     stop();
 }
 
-int main()
+void test_hello()
 {
+    char hello[] = "hello, world!\n";
+    int i = 0;
     for (Iter(hello) it = begin(hello); !it.done; it = next(hello, it)) {
-        printf("%c", it.value);
+        assert(hello[i] == it.value);
+        ++i;
     }
+}
 
+void test_integers()
+{
     int N = 20;
     Iter(integer) it = begin(integer);
     for (int i = 0; i < N; ++i) {
-        printf("%d\n", it.value);
+        assert(i == it.value);
         it = next(integer, it);
     }
+}
+
+int main()
+{
+    test_hello();
+    test_integers();
+    printf("Test passed\n");
 }
