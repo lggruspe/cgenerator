@@ -10,8 +10,8 @@ typedef struct {
     bool done;
 } Iterator;
 
-#define Generator(Type, Name) \
-Type Name(Iterator *prev) \
+#define Generator(Type, Name, ...) \
+Type Name(Iterator *prev, ##__VA_ARGS__) \
 { \
     struct { Type garbage; void *null; } impl = { .null = NULL }; \
     if (prev->done) { \

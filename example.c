@@ -64,6 +64,24 @@ Generator(void*, none)
     stop();
 }
 
+Generator(int, repeat, int val)
+{
+    for (;;) {
+        yield(val);
+    }
+    stop();
+}
+
+Generator(int, repeat42)
+{
+    static Iterator it;
+    it = begin();
+    for (;;) {
+        yield(repeat(&it, 42));
+    }
+    stop();
+}
+
 void test_hello()
 {
     char helloworld[] = "hello, world!\n";
@@ -97,10 +115,21 @@ void test_yield_none()
     assert(count == 10);
 }
 
+void test_parameterized()
+{
+    Iterator it = begin();
+    for (int i = 0; i < 10; ++i) {
+        assert(!it.done);
+        int val = repeat42(&it);
+        assert(val == 42);
+    }
+}
+
 int main()
 {
     test_hello();
     test_integers();
     test_yield_none();
+    test_parameterized();
     printf("Test passed\n");
 }
