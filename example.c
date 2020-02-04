@@ -26,15 +26,12 @@ Generator(int, even)
 
 Generator(int, integer)
 {
-    static Iter(odd) it;
-    static Iter(even) jt;
-    it = begin(odd);
-    jt = begin(even);
+    static Iterator it, jt;
+    it = begin();   // odd
+    jt = begin();   // even
     for (;;) {
-        yield(jt.value);
-        jt = next(even, jt);
-        yield(it.value);
-        it = next(odd, it);
+        yield(even(&it));
+        yield(odd(&jt));
     }
     stop();
 }
@@ -60,10 +57,11 @@ Generator(char, hello)
 
 void test_hello()
 {
-    char hello[] = "hello, world!\n";
+    char helloworld[] = "hello, world!\n";
     int i = 0;
-    for (Iter(hello) it = begin(hello); !it.done; it = next(hello, it)) {
-        assert(hello[i] == it.value);
+    Iterator it = begin();
+    for (char c = hello(&it); !it.done; c = hello(&it)) {
+        assert(c == helloworld[i]);
         ++i;
     }
 }
@@ -71,10 +69,10 @@ void test_hello()
 void test_integers()
 {
     int N = 20;
-    Iter(integer) it = begin(integer);
+    Iterator it = begin();
     for (int i = 0; i < N; ++i) {
-        assert(i == it.value);
-        it = next(integer, it);
+        int n = integer(&it);
+        assert(i == n);
     }
 }
 

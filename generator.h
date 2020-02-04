@@ -5,40 +5,37 @@
 #define CONCAT_IMPL(x, y) x##y
 #define CONCAT(x, y) CONCAT_IMPL(x, y)
 
-#define Iter(Name) struct Name##_iter
+typedef struct {
+    void *label;
+    bool done;
+} Iterator;
 
 #define Generator(Type, Name) \
-Iter(Name) { \
-    void *label; \
-    Type value; \
-    bool done; \
-}; \
- \
-Iter(Name) Name##_impl(Iter(Name) prev) \
+Type Name(Iterator *prev) \
 { \
-    Iter(Name) next = {.done = false}; \
-    if (prev.done) { \
+    struct { Type garbage; void *null; } impl = { .null = NULL }; \
+    if (prev->done) { \
         goto end; \
     } \
-    if (prev.label) { \
-        goto *(prev.label); \
+    if (prev->label) { \
+        goto *(prev->label); \
     }
 
 #define yield(Value) \
-        next.value = (Value); \
-        set_yield_label(CONCAT(l, __COUNTER__))
+        set_yield_label((Value), CONCAT(l, __COUNTER__))
 
-#define set_yield_label(Label) \
-        next.label = &&Label; \
-        return next; \
+#define set_yield_label(Value, Label) \
+        prev->label = &&Label; \
+        return (Value); \
     Label:
 
 #define stop() \
     end: \
-        next.done = true; \
-        return next; \
+        prev->done = true; \
+        return impl.garbage; \
 }
 
-#define begin(Name) (Name##_impl)((Iter(Name)){ .done = false, .label = NULL })
-
-#define next(Name, Iterator) (Name##_impl)(Iterator)
+static inline Iterator begin()
+{
+    return (Iterator){ .done = false, .label = NULL };
+}
