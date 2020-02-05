@@ -28,9 +28,12 @@ GENERATOR(void *, pong)
 
 void run_coroutine(Coroutine coroutine)
 {
-    Iterator it = create_iterator();
+    Iterator it = create_iterator();    // ping
+    Iterator jt = create_iterator();    // pong
     while (!it.done) {
-        coroutine = coroutine(&it);
+        coroutine = coroutine == ping
+            ? coroutine(&it)
+            : coroutine(&jt);
     }
 }
 
