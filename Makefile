@@ -1,15 +1,14 @@
 CC = gcc
 CFLAGS = -g -Wall -Wextra -Werror
+CPPFLAGS = -I./include
+TARGETS = iterators coroutines
 
 .PHONY:	all
-all:	example coroutines_example
+all:	$(TARGETS)
 
-example:	example.c generator.h
-	$(CC) $(CFLAGS) -o $@ $<
-
-coroutines_example:	coroutines_example.c generator.h
-	$(CC) $(CFLAGS) -o $@ $<
+$(TARGETS):	%:	examples/%.c include/generator.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 .PHONY: clean
 clean:
-	-rm -rf example coroutines_example
+	-rm -rf $(TARGETS)
