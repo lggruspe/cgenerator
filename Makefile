@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -g -Wall -Wextra -Werror
 CPPFLAGS = -I./include
-TARGETS = iterators coroutines iterators2
+TARGETS = iterators coroutines iterators2 coroutines2
 
 .PHONY:	all
 all:	$(TARGETS)
